@@ -1,11 +1,11 @@
-# Frostgate — Colosseum Submission Draft
+# Aethergate — Colosseum Submission Draft
 
 *Prepared 2026-09-30. Travis authorized Hal to submit. Deadline: **Oct 12, 2026, 11:59 PM PDT** (official, from colosseum.com/worldsfair). Zcash track: **$100,000 pool — 10 projects × $10,000** (per event coverage; the official prizes page lists the $840,000 total without a per-track breakdown). Total hackathon prizes: $840,000 + $2.5M accelerator seed funding (official).*
 
 > ⚠️ **Action needed:** Travis's Arena profile is INCOMPLETE — the dashboard banner says "Complete your profile ... to be eligible to compete." Builder details (bio, skills, links) show "Nothing to see here!" This must be fixed before submission.
 
 ## Project name
-Frostgate
+Aethergate
 
 ## Tagline
 Threshold custody for cross-chain bridges — five operators, one key that never exists.
@@ -14,7 +14,7 @@ Threshold custody for cross-chain bridges — five operators, one key that never
 Zcash
 
 ## Repository
-https://github.com/Holedozer1229/frostgate (public, MIT/Apache-2.0)
+https://github.com/Holedozer1229/aethergate (public, MIT/Apache-2.0)
 
 ## Videos (Colosseum-spec versions, unlisted)
 - Elevator pitch (0:32, spec: 30-second pitch): https://youtu.be/3hty44PFQH0
@@ -22,11 +22,11 @@ https://github.com/Holedozer1229/frostgate (public, MIT/Apache-2.0)
 - Earlier cuts (superseded, still unlisted): pitch https://youtu.be/2GzfhwevnXI, demo https://youtu.be/y39ULUT2C3U
 
 ## Logo
-`~/workspace/frostgate/assets/frostgate-logo.webp` — five shards converging on a keyhole.
+`~/workspace/aethergate/assets/aethergate-logo.webp` — five shards converging on a keyhole.
 
 ## Description (for the form)
 
-Frostgate is threshold-federation custody infrastructure for cross-chain bridges. Five independent operators run a dealerless 3-of-5 FROST ceremony (RFC 9591, Zcash Foundation implementation) and jointly control a single Bitcoin Taproot address. The full key never exists at any point in time; the quorum produces one 64-byte BIP340 Schnorr signature on-chain, indistinguishable from a normal Taproot spend.
+Aethergate is threshold-federation custody infrastructure for cross-chain bridges. Five independent operators run a dealerless 3-of-5 FROST ceremony (RFC 9591, Zcash Foundation implementation) and jointly control a single Bitcoin Taproot address. The full key never exists at any point in time; the quorum produces one 64-byte BIP340 Schnorr signature on-chain, indistinguishable from a normal Taproot spend.
 
 The bridge settles across chains: the FROST quorum signs an exact ReleaseAttestation, and a coordinator verifies the aggregate signature before constructing the Zcash testnet release. The adversarial demo shows the failure modes handled in production: an offline quorum still settles, a malicious operator is cryptographically identified and excluded mid-session, and replayed attestations are refused.
 

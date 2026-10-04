@@ -1,4 +1,4 @@
-# Frostgate — Pitch
+# Aethergate — Pitch
 
 *3-minute pitch script + the company case. Written for the Colosseum Crypto
 World's Fair, Zcash track.*
@@ -13,12 +13,12 @@ Bridges are crypto's number-one loss vector. Ronin: $625 million — validator
 keys compromised. Wormhole: $320 million — a guardian signature check bypassed.
 Nomad, Poly Network, Multichain — billions gone to contract-level verification
 bugs. Different failures, same lesson: the bridge failed at its *trust
-assumptions*. Frostgate shrinks that surface to one thing: a 3-of-5 FROST
+assumptions*. Aethergate shrinks that surface to one thing: a 3-of-5 FROST
 quorum with no trusted dealer and no single key to steal.
 
 **[0:25–0:50 — The insight]**
 
-What if there is no key to steal? Frostgate replaces the bridge multisig with
+What if there is no key to steal? Aethergate replaces the bridge multisig with
 a **3-of-5 FROST threshold signature** — five independent operators who jointly
 control a single Bitcoin Taproot address, where no operator ever holds the
 full key — only a share, useless alone — and no trusted dealer ever existed
@@ -40,17 +40,17 @@ command.
 
 **[1:50–2:20 — Why this wins]**
 
-Two things make Frostgate different from every "secure bridge" pitch. First,
+Two things make Aethergate different from every "secure bridge" pitch. First,
 the cryptography is not ours: the FROST core crates were built at the **Zcash
 Foundation** and NCC-audited (our `frost-secp256k1-tr` dependency was outside
-that audit's scope), and Frostgate puts the ZF implementation to work as bridge
+that audit's scope), and Aethergate puts the ZF implementation to work as bridge
 custody — Zcash cryptography securing Bitcoin via Taproot. Second, the trust model is stated
 honestly, in the README, in writing: what is threshold, what is not, and
 exactly where the remaining trust lives. No "trustless" theater.
 
 **[2:20–2:45 — The business]**
 
-Frostgate is being built as a company, not a demo. Threshold-federation
+Aethergate is being built as a company, not a demo. Threshold-federation
 custody as infrastructure: operator-quorum-as-a-service for any protocol that
 needs cross-chain custody, plus a 30-basis-point bridge toll. Every wrapped
 asset, every cross-chain protocol, every institutional custodian is a
@@ -64,16 +64,16 @@ infrastructure from scratch — I shipped my own chain, my own federated bridge
 ledger, a from-scratch ML-DSA-65 implementation. The pre-existing work is
 disclosed day-one in the repo, because the unfair advantage is the point: the
 hackathon budget bought the FROST heart transplant, not a bridge from zero.
-Frostgate removes the key. There is nothing left to steal.
+Aethergate removes the key. There is nothing left to steal.
 
 ---
 
 ## Why the Zcash track
 
 FROST is Zcash Foundation cryptography — designed and implemented there, with
-the core crates NCC-audited (RFC 9591). Frostgate is a live deployment of the ZF implementation as
+the core crates NCC-audited (RFC 9591). Aethergate is a live deployment of the ZF implementation as
 cross-chain bridge custody, and it pays the technology back: every quorum
-attestation in Frostgate is a FROST signature, and the demo settles onto the
+attestation in Aethergate is a FROST signature, and the demo settles onto the
 Zcash testnet.
 This is ZF research securing real value flows, which is the best possible
 advertisement for the Zcash ecosystem's cryptographic leadership.
@@ -82,7 +82,7 @@ advertisement for the Zcash ecosystem's cryptographic leadership.
 
 | Milestone | Evidence |
 |---|---|
-| 5-of-3 dealerless DKG | `frostgate-operator dkg`, key packages mode 0600 |
+| 5-of-3 dealerless DKG | `aethergate-operator dkg`, key packages mode 0600 |
 | Single Taproot custody key | BIP341 tweak verified byte-for-byte vs rust-bitcoin |
 | Bitcoin regtest threshold spend | txid `c3dbc434…f977676`, mined in regtest block 103 |
 | Zcash testnet release (direct) | txid `aa8972f2…785b5c`, mined at height 4,419,993 |
@@ -94,6 +94,6 @@ advertisement for the Zcash ecosystem's cryptographic leadership.
 ## The ask
 
 $100K Zcash track prize to fund the security audit of the coordinator and the
-mainnet hardening; Colosseum accelerator ($250K) to build Frostgate into the
+mainnet hardening; Colosseum accelerator ($250K) to build Aethergate into the
 threshold-custody infrastructure company — operator quorum as a service, with
 the bridge toll as the revenue engine.

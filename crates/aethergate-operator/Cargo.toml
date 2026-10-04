@@ -1,0 +1,18 @@
+[package]
+name = "aethergate-operator"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "Aethergate federation operator CLI (DKG ceremony, key management)"
+
+[[bin]]
+name = "aethergate-operator"
+path = "src/main.rs"
+
+[dependencies]
+aethergate-federation = { path = "../aethergate-federation" }
+aethergate-bitcoin = { path = "../aethergate-bitcoin" }
+bitcoin = "0.32"
+clap = { version = "4", features = ["derive"] }
+rand = "0.8"
+anyhow = "1"

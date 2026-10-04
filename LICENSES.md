@@ -1,12 +1,12 @@
-# Frostgate — Dependency & License Inventory
+# Aethergate — Dependency & License Inventory
 
 Generated 2026-09-30 from `Cargo.lock` and vendored crate metadata
 (`~/.cargo/registry/src/*`). Versions pinned by `Cargo.lock` at the repo root.
 
 ## License posture
 
-- **Frostgate's own crates** (`frostgate-federation`, `frostgate-bitcoin`,
-  `frostgate-zcash`, `frostgate-operator`, `frostgate-coordinator`): each declares
+- **Aethergate's own crates** (`aethergate-federation`, `aethergate-bitcoin`,
+  `aethergate-zcash`, `aethergate-operator`, `aethergate-coordinator`): each declares
   `license = "MIT OR Apache-2.0"` in its `Cargo.toml`.
 - **Every direct third-party dependency is permissive.** No GPL, AGPL, LGPL, or
   other copyleft licenses anywhere in the direct dependency set. Indirect
@@ -15,7 +15,7 @@ Generated 2026-09-30 from `Cargo.lock` and vendored crate metadata
 
 ## Direct dependencies
 
-| Crate | Locked version | License | Role in Frostgate |
+| Crate | Locked version | License | Role in Aethergate |
 |---|---|---|---|
 | frost-core | 3.0.0 | MIT OR Apache-2.0 | Zcash Foundation FROST protocol core (RFC 9591) — DKG, signing rounds, aggregation, cheater detection |
 | frost-secp256k1-tr | 3.0.0 | MIT OR Apache-2.0 | ZF FROST ciphersuite for secp256k1 with Taproot (BIP341) tweak support |
@@ -35,7 +35,7 @@ Generated 2026-09-30 from `Cargo.lock` and vendored crate metadata
 ## Cryptography provenance (for the security-minded reader)
 
 - Threshold signing is **built on the Zcash Foundation's FROST implementation**
-  (RFC 9591), not a from-scratch protocol. Do not describe Frostgate as an
+  (RFC 9591), not a from-scratch protocol. Do not describe Aethergate as an
   "audited bridge": the FROST core crates were NCC-audited, but
   `frost-secp256k1-tr` was **outside** that audit scope.
 - FROST shares are Schnorr shares. They cannot produce ECDSA signatures; the

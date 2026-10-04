@@ -1,6 +1,6 @@
-# Frostgate — Reproducible Demo
+# Aethergate — Reproducible Demo
 
-*Everything a judge needs to reproduce the Frostgate demo, in order.
+*Everything a judge needs to reproduce the Aethergate demo, in order.
 Prerequisites: Rust ≥ 1.98 (`rustup` toolchain), `python3`, network access.
 No API keys. All commands run from the repo root.*
 
@@ -18,8 +18,8 @@ cargo clippy --workspace -- -D warnings   # expect: clean
 Five operators, threshold 3, no trusted dealer:
 
 ```bash
-cargo run -q -p frostgate-operator -- dkg --operators 5 --threshold 3 --out ./ceremony
-cargo run -q -p frostgate-operator -- federation-address --ceremony ./ceremony
+cargo run -q -p aethergate-operator -- dkg --operators 5 --threshold 3 --out ./ceremony
+cargo run -q -p aethergate-operator -- federation-address --ceremony ./ceremony
 # prints the single Taproot (P2TR) address all five operators independently derive.
 # Key packages are written mode 0600; inspect with: ls -l ./ceremony
 ```
@@ -31,14 +31,14 @@ Three fault modes. Each run performs a fresh in-process DKG, drives the
 
 ```bash
 # Honest quorum: attestation signed, release built, journal written.
-cargo run -q -p frostgate-coordinator -- demo --fault none
+cargo run -q -p aethergate-coordinator -- demo --fault none
 
 # Two operators offline: the remaining three still form a quorum and settle.
-cargo run -q -p frostgate-coordinator -- demo --fault offline:1,2
+cargo run -q -p aethergate-coordinator -- demo --fault offline:1,2
 
 # One malicious operator: bad share is detected, attributed, excluded;
 # the session retries with fresh nonces and settles; a replay is refused.
-cargo run -q -p frostgate-coordinator -- demo --fault malicious:2
+cargo run -q -p aethergate-coordinator -- demo --fault malicious:2
 ```
 
 Expected in the malicious run: `EXCLUDED CHEATERS (bad share detected +
@@ -51,14 +51,14 @@ aggregate-signature verification → v4 transparent release → live broadcast
 via `testnet.zec.rocks:443`:
 
 ```bash
-cargo run -q -p frostgate-coordinator --example d8_demo_live
+cargo run -q -p aethergate-coordinator --example d8_demo_live
 ```
 
 Historical example output from the first D8 run (values vary per run — a fresh
 destination key, txid, and change output are minted each time; structure does not):
 
 ```
-=== Frostgate D8: live quorum settlement (testnet) ===
+=== Aethergate D8: live quorum settlement (testnet) ===
 
 DKG complete: 5 operators, threshold 3
 vault: tmTaDmKA1kc43EVxzefNdHBszy2DV4zpjXr
@@ -109,7 +109,7 @@ auto-discovers the latest vault UTXO, so a rerun spends from here).
   FROST is Schnorr and Zcash transparent inputs need ECDSA. The 3-of-5 quorum
   controls *authorization* (it threshold-signs the exact release attestation,
   which the coordinator independently re-verifies); execution is 1-of-1. This
-  is documented in the README and `crates/frostgate-zcash/src/keys.rs`.
+  is documented in the README and `crates/aethergate-zcash/src/keys.rs`.
 - The demo `OperatorRelay` is an in-process transport. Production needs
   authenticated operator channels; the coordinator is trusted for liveness.
 - Testnet only. No mainnet funds have touched this code.
@@ -118,6 +118,6 @@ auto-discovers the latest vault UTXO, so a rerun spends from here).
 
 ```bash
 cargo test --workspace && \
-cargo run -q -p frostgate-coordinator -- demo --fault malicious:2 && \
-cargo run -q -p frostgate-coordinator --example d8_demo_live
+cargo run -q -p aethergate-coordinator -- demo --fault malicious:2 && \
+cargo run -q -p aethergate-coordinator --example d8_demo_live
 ```

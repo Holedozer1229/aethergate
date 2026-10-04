@@ -2,7 +2,7 @@
 """Independent Zcash testnet P2PKH address derivation (stdlib only).
 
 Used to generate the cross-check vector baked into
-crates/frostgate-zcash/src/address.rs tests. Run:
+crates/aethergate-zcash/src/address.rs tests. Run:
     python3 addr_check.py
 """
 import hashlib

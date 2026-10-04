@@ -1,4 +1,4 @@
-# Frostgate — Business Plan
+# Aethergate — Business Plan
 
 *Threshold-federation custody for cross-chain bridges. Pre-seed memo, Sep 30, 2026.*
 
@@ -19,7 +19,7 @@ sharded — never assembled in the first place.
 
 ## 2. The product
 
-Frostgate is threshold-federation custody infrastructure. Five independent
+Aethergate is threshold-federation custody infrastructure. Five independent
 operators run a **dealerless FROST ceremony** (RFC 9591, built on the Zcash
 Foundation's implementation) and jointly control a single Bitcoin Taproot
 address. Properties that matter to customers:
@@ -51,7 +51,7 @@ cryptography.
 
 **Lane 1 — Bridge toll (inherited design, labeled as pre-existing).**
 The pre-event bridge design carries a 30-bps (0.30%) toll on transfers. Applied
-to Frostgate's threshold custody, the toll is the primary revenue line.
+to Aethergate's threshold custody, the toll is the primary revenue line.
 *Illustrative, not a projection:* $10M monthly bridge volume → $30k/month toll
 revenue at 30 bps. The toll rate and the operator-quorum model predate the
 hackathon; the threshold-custody enforcement of it is new.
@@ -94,7 +94,7 @@ and the customer base simultaneously.
 Blanco, TX) — founder. Background: independent researcher and systems builder;
 prior work includes a federated bridge ledger (M-of-N quorum, 30-bps toll,
 supply invariants), a from-scratch ML-DSA-65 implementation (bit-for-bit KAT
-verified), and Bitcoin mining/Stratum infrastructure. Building Frostgate
+verified), and Bitcoin mining/Stratum infrastructure. Building Aethergate
 full-time through the World's Fair and beyond.
 
 ## 8. The ask

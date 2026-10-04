@@ -1,4 +1,4 @@
-# Frostgate — Trust Model
+# Aethergate — Trust Model
 
 *Stated precisely, in writing, before any mainnet conversation. If a sentence
 here is wrong, the code is wrong — file an issue.*
@@ -59,6 +59,6 @@ here is wrong, the code is wrong — file an issue.*
 
 A two-way trustless peg is impossible on today's Bitcoin and Zcash: neither
 chain can verify the other's consensus. Anyone selling a two-way trustless
-BTC↔ZEC bridge is selling theater. Frostgate claims the achievable thing — a
+BTC↔ZEC bridge is selling theater. Aethergate claims the achievable thing — a
 federation whose custody key provably never existed in one place — and states
 the residual trust in writing.

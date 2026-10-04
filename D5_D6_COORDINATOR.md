@@ -1,11 +1,11 @@
-# Frostgate D5–D6: Coordinator Service + Operator Relay + Adversarial Demo
+# Aethergate D5–D6: Coordinator Service + Operator Relay + Adversarial Demo
 
 **Date:** 2026-09-30
 **Status:** IMPLEMENTED + MEASURED (all tests green, CLI demo captured)
 
 ## D5 — Coordinator service wiring
 
-New crate `frostgate-coordinator` (lib + `main.rs` CLI):
+New crate `aethergate-coordinator` (lib + `main.rs` CLI):
 
 ```
 Esplora watcher ──> peg-in ──> ReleaseAttestation ──> FROST 3-of-5 session
@@ -16,10 +16,10 @@ Esplora watcher ──> peg-in ──> ReleaseAttestation ──> FROST 3-of-5 s
         ChainClient::broadcast ──> journal (replay protection)
 ```
 
-- `CoordinatorService` (`crates/frostgate-coordinator/src/service.rs`) owns one
+- `CoordinatorService` (`crates/aethergate-coordinator/src/service.rs`) owns one
   settlement pass: scan → attest → sign → verify → build → broadcast → record.
 - Cheater handling: on a `CeremonyError::InvalidSignatureShare`, culprits are
-  extracted via `frostgate_federation::cheater_culprits`, excluded, and the
+  extracted via `aethergate_federation::cheater_culprits`, excluded, and the
   session is retried once with fresh nonces. Unattributed failure → clean
   `BelowThreshold` error (funds stay put; no partial release).
 - `Journal` (`journal.rs`): settled-outpoint set + used-nonce set, JSON
@@ -33,7 +33,7 @@ Esplora watcher ──> peg-in ──> ReleaseAttestation ──> FROST 3-of-5 s
 
 ## D6 — Adversarial demonstration (CLI-runnable)
 
-`cargo run -p frostgate-coordinator -- demo --fault <mode>` runs the full
+`cargo run -p aethergate-coordinator -- demo --fault <mode>` runs the full
 loop in-process: fresh DKG → mock Zcash vault funding → synthetic peg-in →
 settlement → printed transcript. Measured 2026-09-30:
 

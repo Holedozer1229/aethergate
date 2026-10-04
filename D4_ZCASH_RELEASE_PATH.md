@@ -1,6 +1,6 @@
 # D4 — Zcash testnet release path: COMPLETE (code + tests)
 
-Date: 2026-09-30. Crate: `crates/frostgate-zcash` (new, in workspace via `crates/*`).
+Date: 2026-09-30. Crate: `crates/aethergate-zcash` (new, in workspace via `crates/*`).
 
 ## What was built
 
@@ -14,9 +14,9 @@ Date: 2026-09-30. Crate: `crates/frostgate-zcash` (new, in workspace via `crates
 
 ## Verification (all measured, this box)
 
-- `cargo test --workspace`: **48 passed, 0 failed** (frostgate-zcash: 29/29; federation 13; others unchanged).
-- `cargo clippy -p frostgate-zcash --all-targets -- -D warnings`: clean.
-- `cargo fmt -p frostgate-zcash`: applied.
+- `cargo test --workspace`: **48 passed, 0 failed** (aethergate-zcash: 29/29; federation 13; others unchanged).
+- `cargo clippy -p aethergate-zcash --all-targets -- -D warnings`: clean.
+- `cargo fmt -p aethergate-zcash`: applied.
 - **ZIP-143 cross-validation**: independent from-scratch Python implementation
   (`.dev/zip143_check.py`) agrees byte-for-byte on the fixture sighash
   (`55e1f03d…78f10`), preimage (294 bytes), and unsigned-tx length (138 bytes).
@@ -108,7 +108,7 @@ was ACCEPTED by testnet.zec.rocks on 2026-09-30, spending the faucet UTXO
 (c92cb7e4...:0, 10,000,000 zat) to release 9,000,000 zat.
 
 **Implementation:** Pure-Rust BLAKE2b-256 with 16-byte personalization in
-`crates/frostgate-zcash/src/blake2b.rs`, verified against Python
+`crates/aethergate-zcash/src/blake2b.rs`, verified against Python
 hashlib.blake2b. The `blake2` crate (v0.10) does not expose personalization
 via its high-level API, hence the from-scratch implementation.
 
@@ -123,7 +123,7 @@ authorization path**: the release below was authorized by a live 3-of-5 FROST
 quorum signing the exact release attestation — not by a direct
 `build_release` call.
 
-**Run:** `cargo run -p frostgate-coordinator --example d7b_coordinator_live`
+**Run:** `cargo run -p aethergate-coordinator --example d7b_coordinator_live`
 (fresh 5-of-3 DKG -> `OperatorRelay` -> `CoordinatorService::settle()` ->
 `LwdBridge` ChainClient -> testnet.zec.rocks).
 

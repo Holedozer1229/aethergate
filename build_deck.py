@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the Frostgate pitch deck (PPTX) for Colosseum upload."""
+"""Generate the Aethergate pitch deck (PPTX) for Colosseum upload."""
 from pptx import Presentation
 from pptx.util import Inches, Pt
 from pptx.dml.color import RGBColor
@@ -12,7 +12,7 @@ GRAY = RGBColor(0xA8, 0xB0, 0xBC)
 GOLD = RGBColor(0xF5, 0xB7, 0x01)
 
 SLIDES = [
-    ("Frostgate",
+    ("Aethergate",
      "Threshold custody for cross-chain bridges",
      ["Five operators. One key that never exists.",
       "",
@@ -25,7 +25,7 @@ SLIDES = [
       "One key, one server, one small multisig — one compromise and the money is gone."]),
     ("The insight",
      "What if there is no key to steal?",
-     ["Frostgate replaces the bridge multisig with a 3-of-5 FROST threshold signature.",
+     ["Aethergate replaces the bridge multisig with a 3-of-5 FROST threshold signature.",
       "",
       "• Five independent operators jointly control one Bitcoin Taproot address",
       "• No operator ever holds the full key — only a share, useless alone",
@@ -50,11 +50,11 @@ SLIDES = [
       "Zcash execution: coordinator-held key (stated honestly, in writing)",
       "",
       "FROST (RFC 9591) produces Schnorr signatures — exactly what Taproot needs."]),
-    ("Why Frostgate wins",
+    ("Why Aethergate wins",
      "Two things no other bridge pitch has",
      ["1. The cryptography is not ours.",
       "   FROST was built and audited at the Zcash Foundation.",
-      "   Frostgate puts the ZF implementation to work as bridge custody —",
+      "   Aethergate puts the ZF implementation to work as bridge custody —",
       "   Zcash cryptography securing Bitcoin via Taproot.",
       "",
       "2. The trust model is stated honestly, in writing.",
@@ -84,10 +84,10 @@ SLIDES = [
       "• Bitcoin mining and Stratum infrastructure",
       "• Federated bridge ledgers",
       "",
-      "Built Frostgate end-to-end: cryptography, nodes, settlement, video, docs."]),
-    ("Frostgate",
+      "Built Aethergate end-to-end: cryptography, nodes, settlement, video, docs."]),
+    ("Aethergate",
      "The key that never exists.",
-     ["github.com/Holedozer1229/frostgate",
+     ["github.com/Holedozer1229/aethergate",
       "",
       "Live testnet settlements. Honest trust model. No trusted dealer.",
       "",
@@ -131,6 +131,6 @@ for title, subtitle, bullets in SLIDES:
         p.font.size = Pt(22); p.font.color.rgb = WHITE if not b.startswith("•") and b else GRAY
         p.space_after = Pt(8)
 
-out = "/home/hatch/workspace/frostgate/Frostgate-Pitch-Deck.pptx"
+out = "/home/hatch/workspace/aethergate/Aethergate-Pitch-Deck.pptx"
 prs.save(out)
 print("saved", out)

@@ -2,7 +2,7 @@
 """Independent Zcash v4 transparent sighash (ZIP-143/ZIP-243) implementation.
 
 From-scratch implementation used to cross-validate the Rust code in
-crates/frostgate-zcash/src/tx.rs. Run:
+crates/aethergate-zcash/src/tx.rs. Run:
     python3 zip143_check.py
 Prints sighash + serialized tx for a fixed fixture; the Rust test
 `tx::tests::sighash_matches_independent_python_vector` pins these values.

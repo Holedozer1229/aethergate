@@ -1,8 +1,8 @@
-# Frostgate — Threshold Federation Custody for Cross-Chain Bridges
+# Aethergate — Threshold Federation Custody for Cross-Chain Bridges
 
 **Bridges are crypto's #1 loss vector — every major bridge hack was a failure
 of the bridge's trust assumptions: Ronin fell to compromised validator keys;
-Poly, Wormhole, and Nomad fell to contract-level verification bugs.** Frostgate removes the
+Poly, Wormhole, and Nomad fell to contract-level verification bugs.** Aethergate removes the
 key entirely. Five independent operators jointly custody a single Bitcoin
 Taproot address through a **dealerless 3-of-5 FROST threshold ceremony** (built
 on the Zcash Foundation's RFC 9591 implementation). No single operator ever
@@ -10,7 +10,7 @@ holds the key. No trusted dealer ever existed. Two operators can go offline
 and the bridge keeps settling; a cheating operator is detected, named, and
 excluded automatically.
 
-Frostgate is being built as a company, not a demo: threshold-federation
+Aethergate is being built as a company, not a demo: threshold-federation
 custody as infrastructure, with operator-quorum-as-a-service and a 30-bps
 bridge toll as the revenue engine. See [docs/BUSINESS_PLAN.md](docs/BUSINESS_PLAN.md).
 
@@ -30,7 +30,7 @@ bridge toll as the revenue engine. See [docs/BUSINESS_PLAN.md](docs/BUSINESS_PLA
 - **[IMPLEMENTED + MEASURED]** Live Zcash testnet releases via lightwalletd (`testnet.zec.rocks:443`):
   - D7 (direct path): `aa8972f2829ef07ab9efa7b636f38f83df859e9db0dfa0eca56cefdf5d785b5c`, mined at height 4,419,993 — 9,000,000 zat released.
   - D7b (full quorum path): `54a36d22f06f22740ccc061612decba7cd7a58203df9d68179e26a64dd52a8c6`, mined at height 4,419,998 — fresh 5-of-3 DKG → quorum-signed attestation → 100,000 zat released.
-  - D8 (reproducible quorum path): `7f6cc65612b6f7e79ee679bf64013204d3ce92486269cd705330ad78f4db11bd`, mined at height 4,420,002 — `cargo run -p frostgate-coordinator --example d8_demo_live` reproduces the full path end to end (each run mints a fresh txid and destination).
+  - D8 (reproducible quorum path): `7f6cc65612b6f7e79ee679bf64013204d3ce92486269cd705330ad78f4db11bd`, mined at height 4,420,002 — `cargo run -p aethergate-coordinator --example d8_demo_live` reproduces the full path end to end (each run mints a fresh txid and destination).
   - D8 rerun (auto-discovering vault UTXO): `1767009eee0a104682221fdfdebe7a141c1842bcc3d172e0eb85510f94289eda`, mined at height 4,420,003 — 100,000 zat released, 660,000 zat change. Current vault: `1767009e...:1` = 660,000 zat.
 - **62 tests pass, 0 fail. `cargo clippy -- -D warnings` clean. `cargo fmt --check` clean.**
 
@@ -60,11 +60,11 @@ Crates:
 
 | Crate | Role |
 |---|---|
-| `frostgate-federation` | DKG ceremony, signing sessions, Taproot tweak, cheater attribution — the FROST core |
-| `frostgate-bitcoin` | P2TR derivation, regtest/testnet spend builder, Esplora watcher |
-| `frostgate-zcash` | Release-key management, P2PKH addressing, v4 tx builder, ZIP-143 sighash, RPC client |
-| `frostgate-operator` | CLI: `dkg`, `federation-address`, `taproot-spend`, `demo-sign` |
-| `frostgate-coordinator` | Settlement service + adversarial demo CLI (`demo`, `watch`) |
+| `aethergate-federation` | DKG ceremony, signing sessions, Taproot tweak, cheater attribution — the FROST core |
+| `aethergate-bitcoin` | P2TR derivation, regtest/testnet spend builder, Esplora watcher |
+| `aethergate-zcash` | Release-key management, P2PKH addressing, v4 tx builder, ZIP-143 sighash, RPC client |
+| `aethergate-operator` | CLI: `dkg`, `federation-address`, `taproot-spend`, `demo-sign` |
+| `aethergate-coordinator` | Settlement service + adversarial demo CLI (`demo`, `watch`) |
 
 ## Run the demo
 
@@ -72,18 +72,18 @@ Prerequisites: Rust ≥ 1.98 (`rustup` toolchain), no API keys needed.
 
 ```bash
 export PATH="$HOME/.cargo/bin:$PATH"
-cd frostgate
+cd aethergate
 
 # 1. Run the dealerless DKG ceremony (5 operators, threshold 3)
-cargo run -q -p frostgate-operator -- dkg --operators 5 --threshold 3 --out ./ceremony
+cargo run -q -p aethergate-operator -- dkg --operators 5 --threshold 3 --out ./ceremony
 
 # 2. Print the federation's Taproot address
-cargo run -q -p frostgate-operator -- federation-address --ceremony ./ceremony
+cargo run -q -p aethergate-operator -- federation-address --ceremony ./ceremony
 
 # 3. Run the coordinator demo — three fault modes:
-cargo run -q -p frostgate-coordinator -- demo --fault none           # honest quorum
-cargo run -q -p frostgate-coordinator -- demo --fault offline:1,2    # 2 operators down: still settles
-cargo run -q -p frostgate-coordinator -- demo --fault malicious:2    # bad share: attributed + excluded
+cargo run -q -p aethergate-coordinator -- demo --fault none           # honest quorum
+cargo run -q -p aethergate-coordinator -- demo --fault offline:1,2    # 2 operators down: still settles
+cargo run -q -p aethergate-coordinator -- demo --fault malicious:2    # bad share: attributed + excluded
 ```
 
 The `malicious:2` run prints `EXCLUDED CHEATERS (bad share detected + attributed): [2]`,
@@ -93,7 +93,7 @@ replay of the same peg-in.
 Watch mode (live Esplora polling + Zcash RPC release leg):
 
 ```bash
-cargo run -q -p frostgate-coordinator -- watch \
+cargo run -q -p aethergate-coordinator -- watch \
   --ceremony ./ceremony \
   --release-key ./rehearsal/release-key.json \
   --zcash-rpc-url http://127.0.0.1:18232 --zcash-rpc-user user --zcash-rpc-pass pass \

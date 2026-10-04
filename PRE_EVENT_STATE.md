@@ -1,4 +1,4 @@
-# PRE-EVENT STATE — Frostgate: Threshold Federation Bridge
+# PRE-EVENT STATE — Aethergate: Threshold Federation Bridge
 
 Disclosure of pre-existing work. Written **2026-09-30**, before any hackathon-judged
 work began. Colosseum World's Fair rules judge only work done Sep 14 – Oct 12, 2026

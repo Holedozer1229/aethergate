@@ -1,6 +1,6 @@
-# Frostgate Mainnet Runbook — how the created methods go live on Bitcoin mainnet
+# Aethergate Mainnet Runbook — how the created methods go live on Bitcoin mainnet
 
-Status: methods proven on mainnet params (`cargo test -p frostgate-bitcoin --test mainnet_params`: 2/2 green, 2026-09-30).
+Status: methods proven on mainnet params (`cargo test -p aethergate-bitcoin --test mainnet_params`: 2/2 green, 2026-09-30).
 No cryptography changes needed — the delta from the testnet demo is configuration.
 
 ## What was proven
@@ -17,7 +17,7 @@ No cryptography changes needed — the delta from the testnet demo is configurat
 - **Zcash via FROST: impossible.** FROST produces Schnorr signatures; Zcash transparent inputs
   require ECDSA (ZIP-243). Same signature-scheme wall documented in the trust model. A Zcash
   mainnet leg would be plain P2SH multisig — standard engineering, not our method. Don't sell
-  it as Frostgate.
+  it as Aethergate.
 - **Bitcoin mainnet is the FROST chain.** Taproot key-path spends are exactly what
   `frost-secp256k1-tr` was built for.
 

@@ -1,4 +1,4 @@
-# ZCG Grant Proposal (DRAFT — not submitted): Frostgate End-to-End FROST Threshold Custody
+# ZCG Grant Proposal (DRAFT — not submitted): Aethergate End-to-End FROST Threshold Custody
 
 > Status: draft for Travis's review. Do NOT post to GitHub/forum without his explicit approval.
 
@@ -6,13 +6,13 @@
 
 ## Project title
 
-Frostgate: end-to-end FROST threshold custody for cross-chain bridges — external security review of the coordinator
+Aethergate: end-to-end FROST threshold custody for cross-chain bridges — external security review of the coordinator
 
 ## Applicant
 
 Travis Jones — independent researcher/protocol engineer, Blanco, TX.
-- GitHub: https://github.com/Holedozer1229 (Frostgate: https://github.com/Holedozer1229/frostgate)
-- Colosseum Crypto World's Fair entry (Zcash Ecosystem track): https://colosseum.com/arena/projects/frostgate
+- GitHub: https://github.com/Holedozer1229 (Aethergate: https://github.com/Holedozer1229/aethergate)
+- Colosseum Crypto World's Fair entry (Zcash Ecosystem track): https://colosseum.com/arena/projects/aethergate
 - Demo videos: 30s pitch https://youtu.be/3hty44PFQH0 · technical walkthrough https://youtu.be/BjN5Y7RLgYU
 
 ## Problem
@@ -21,15 +21,15 @@ Cross-chain bridges are crypto's #1 loss vector — over $2B stolen in 2021–20
 
 ## Proposed solution
 
-Frostgate replaces the bridge multisig with a **dealerless 3-of-5 FROST threshold federation** built on the Zcash Foundation's FROST implementation (RFC 9591). Five operators run a distributed key generation ceremony — no trusted dealer ever exists. A 3-of-5 quorum signs an exact `ReleaseAttestation`; the coordinator independently verifies the aggregate signature before constructing the Zcash release. Bitcoin side: threshold custody of a single Taproot key. Zcash side: threshold authorization with full on-chain attribution.
+Aethergate replaces the bridge multisig with a **dealerless 3-of-5 FROST threshold federation** built on the Zcash Foundation's FROST implementation (RFC 9591). Five operators run a distributed key generation ceremony — no trusted dealer ever exists. A 3-of-5 quorum signs an exact `ReleaseAttestation`; the coordinator independently verifies the aggregate signature before constructing the Zcash release. Bitcoin side: threshold custody of a single Taproot key. Zcash side: threshold authorization with full on-chain attribution.
 
 ## Why this is the end-to-end application the committee asked for
 
-The committee declined #351 (FROST SDK, July) and #358 (FROST Custody, August), citing "lacking an end-to-end application." Frostgate is that application — it already exists and already settles:
+The committee declined #351 (FROST SDK, July) and #358 (FROST Custody, August), citing "lacking an end-to-end application." Aethergate is that application — it already exists and already settles:
 
 - **End-to-end, live on testnet.** Fresh 5-operator DKG → operator relay → coordinator settlement → broadcast to the Zcash testnet. Three live releases mined (heights 4,419,998 / 4,420,002 / 4,420,003), txids published in the repo.
 - **It answers the hard problems raised on #351.** Secure operator messaging: `OperatorRelay` (built). How participants get the exact bytes to sign: the coordinator constructs the `ReleaseAttestation` and every signer verifies it before signing (built). Share backup and participant disappearance: 3-of-5 tolerates two operators going offline or turning malicious; a cheating operator is detected, named, and excluded automatically (built and tested — 60/60 tests green).
-- **It is cross-chain, not ZEC-only.** #358 was shielded-ZEC custody. Frostgate puts ZF cryptography to work securing Bitcoin via Taproot on one leg and settling to Zcash on the other — the Zcash-ecosystem payoff the track rewards.
+- **It is cross-chain, not ZEC-only.** #358 was shielded-ZEC custody. Aethergate puts ZF cryptography to work securing Bitcoin via Taproot on one leg and settling to Zcash on the other — the Zcash-ecosystem payoff the track rewards.
 
 ## What the grant funds
 
@@ -63,7 +63,7 @@ This is also the unlock for everything after: no serious operator joins a mainne
 
 ## Links
 
-- Repo: https://github.com/Holedozer1229/frostgate
+- Repo: https://github.com/Holedozer1229/aethergate
 - Trust model: `docs/TRUST_MODEL.md` in repo (states exactly what is threshold, what is not, and where the remaining trust lives)
 - Business plan: `docs/BUSINESS_PLAN.md` in repo
 - Live testnet releases: `54a36d22f06f22740ccc061612decba7cd7a58203df9d68179e26a64dd52a8c6` (height 4,419,998), `7f6cc65612b6f7e79ee679bf64013204d3ce92486269cd705330ad78f4db11bd` (4,420,002), `1767009eee0a104682221fdfdebe7a141c1842bcc3d172e0eb85510f94289eda` (4,420,003)
