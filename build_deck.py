@@ -131,6 +131,6 @@ for title, subtitle, bullets in SLIDES:
         p.font.size = Pt(22); p.font.color.rgb = WHITE if not b.startswith("•") and b else GRAY
         p.space_after = Pt(8)
 
-out = "/home/hatch/workspace/aethergate/Aethergate-Pitch-Deck.pptx"
+out = "/home/hatch/workspace/aethergate-wf/Aethergate-Pitch-Deck.pptx"
 prs.save(out)
 print("saved", out)
