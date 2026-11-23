@@ -1,5 +1,5 @@
 use aethergate_federation::authorized_intent::{
-    require_exact_sighash, verify_uruu_authorization, ApprovalMessage, AuthorizationEnvelope,
+    require_exact_sighash, require_live_operator_status, verify_uruu_authorization, ApprovalMessage, AuthorizationEnvelope, LiveOperatorStatus,
     ChainIntent, GuardianSignature, Policy, RecoveryInput,
 };
 use ed25519_dalek::{Signer, SigningKey};
@@ -103,6 +103,20 @@ fn accepts_three_independent_guardian_signatures_and_binds_frost_message() {
     assert_eq!(verified.verified_guardians().len(), 3);
     let approved_sighash = (0..32).map(|_| 0x33u8).collect::<Vec<_>>();
     require_exact_sighash(&verified, &approved_sighash, now).unwrap();
+    let live = LiveOperatorStatus {
+        schema: "uruu.frostgate-operator-status.v1".into(),
+        request_id: "request-01".into(),
+        chain_intent_hash: intent_hash.clone(),
+        expires_at: Some(expires),
+        status: "APPROVED".into(),
+        approval_count: 3,
+        quorum: 3,
+        policy_version: Some("policy-v1".into()),
+        revoked: false,
+        checked_at: now,
+    };
+    require_live_operator_status(&verified, &live, now).unwrap();
+    assert!(require_live_operator_status(&verified, &live, now + 31).is_err());
     assert!(require_exact_sighash(&verified, &[0u8; 32], now).is_err());
     assert!(require_exact_sighash(&verified, &approved_sighash, expires).is_err());
 }
