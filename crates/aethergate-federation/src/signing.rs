@@ -120,6 +120,8 @@ impl OperatorSigner {
             .duration_since(std::time::UNIX_EPOCH)
             .map_err(|_| CeremonyError::Invalid("system clock precedes Unix epoch".into()))?
             .as_secs();
+        crate::authorized_intent::require_signature_compatibility(authorization)
+            .map_err(|err| CeremonyError::Invalid(format!("chain compatibility gate rejected: {err}")))?;
         crate::authorized_intent::require_live_operator_status(
             authorization, live_status, now,
         ).map_err(|err| CeremonyError::Invalid(format!("URUU live status rejected: {err}")))?;
