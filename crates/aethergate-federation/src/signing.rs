@@ -85,7 +85,7 @@ impl OperatorSigner {
     /// Abort an outstanding signing session and drop its one-time nonces.
     /// Call this when authorization, coordinator data, or operator policy fails.
     pub fn abort_pending(&mut self) {
-        self.pending_nonces.take();
+        drop(self.pending_nonces.take());
     }
 
     /// Round 2: emit the signature share for the coordinator's package.
