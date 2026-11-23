@@ -42,6 +42,7 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 pub mod signing;
+pub mod authorized_intent;
 
 pub use frost_core::keys::PublicKeyPackage;
 /// Re-exported FROST types so downstream crates (coordinator, relay) name
