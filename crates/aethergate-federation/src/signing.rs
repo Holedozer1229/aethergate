@@ -115,8 +115,11 @@ impl OperatorSigner {
         signing_package: &SigningPackage<FgSuite>,
         authorization: &crate::authorized_intent::VerifiedAuthorizedIntent,
         live_status: &crate::authorized_intent::LiveOperatorStatus,
-        now: u64,
     ) -> Result<round2::SignatureShare<FgSuite>, CeremonyError> {
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_err(|_| CeremonyError::Invalid("system clock precedes Unix epoch".into()))?
+            .as_secs();
         crate::authorized_intent::require_live_operator_status(
             authorization, live_status, now,
         ).map_err(|err| CeremonyError::Invalid(format!("URUU live status rejected: {err}")))?;
