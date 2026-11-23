@@ -63,8 +63,16 @@ pub struct AuthorizationEnvelope {
 
 #[derive(Debug, Clone)]
 pub struct VerifiedAuthorizedIntent {
-    pub request_id: String, pub chain_intent_hash: [u8; 32], pub sighash: [u8; 32],
-    pub expires_at: u64, pub verified_guardians: Vec<String>,
+    request_id: String, chain_intent_hash: [u8; 32], sighash: [u8; 32],
+    expires_at: u64, verified_guardians: Vec<String>,
+}
+
+impl VerifiedAuthorizedIntent {
+    pub fn request_id(&self) -> &str { &self.request_id }
+    pub fn chain_intent_hash(&self) -> &[u8; 32] { &self.chain_intent_hash }
+    pub fn sighash(&self) -> &[u8; 32] { &self.sighash }
+    pub fn expires_at(&self) -> u64 { self.expires_at }
+    pub fn verified_guardians(&self) -> &[String] { &self.verified_guardians }
 }
 
 fn hex_decode(value: &str) -> Result<Vec<u8>, AuthorizationError> {
