@@ -104,6 +104,26 @@ impl OperatorSigner {
         Ok(round2::sign(signing_package, &nonces, &self.key_package)?)
     }
 
+    /// Sign only when this exact FROST package message matches a locally
+    /// verified URUU recovery authorization. Every operator must independently
+    /// call verify_uruu_authorization with its own trusted guardian registry.
+    ///
+    /// This method does not assert that EXCAL accepts the resulting BIP340
+    /// signature; chain-native compatibility remains a separate gate.
+    pub fn sign_authorized(
+        &mut self,
+        signing_package: &SigningPackage<FgSuite>,
+        authorization: &crate::authorized_intent::VerifiedAuthorizedIntent,
+        now: u64,
+    ) -> Result<round2::SignatureShare<FgSuite>, CeremonyError> {
+        crate::authorized_intent::require_exact_sighash(
+            authorization,
+            signing_package.message(),
+            now,
+        ).map_err(|err| CeremonyError::Invalid(format!("URUU authorization rejected: {err}")))?;
+        self.sign(signing_package)
+    }
+
     /// Round 2 with a BIP341 Taproot tweak: emit the signature share for a
     /// key-path spend from the *tweaked* group key.
     ///
