@@ -1,5 +1,5 @@
 use aethergate_federation::authorized_intent::{
-    require_exact_sighash, require_live_operator_status, verify_uruu_authorization, ApprovalMessage, AuthorizationEnvelope, LiveOperatorStatus,
+    require_exact_sighash, require_live_operator_status, require_signature_compatibility, verify_uruu_authorization, ApprovalMessage, AuthorizationEnvelope, LiveOperatorStatus,
     ChainIntent, GuardianSignature, Policy, RecoveryInput,
 };
 use ed25519_dalek::{Signer, SigningKey};
@@ -105,6 +105,7 @@ fn accepts_three_independent_guardian_signatures_and_binds_frost_message() {
 
     let verified = verify_uruu_authorization(&envelope, &trusted, now).unwrap();
     assert_eq!(verified.verified_guardians().len(), 3);
+    assert!(require_signature_compatibility(&verified).is_err(), "EXCAL signing must remain disabled until compatibility is proven");
     let approved_sighash = (0..32).map(|_| 0x33u8).collect::<Vec<_>>();
     require_exact_sighash(&verified, &approved_sighash, now).unwrap();
     let live = LiveOperatorStatus {
