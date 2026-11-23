@@ -117,6 +117,11 @@ fn accepts_three_independent_guardian_signatures_and_binds_frost_message() {
         approval_count: 3,
         quorum: 3,
         policy_version: Some("policy-v1".into()),
+        new_key_commit: "new-key".into(),
+        policy_commit: "policy-commit".into(),
+        proof_hash: "44".repeat(32),
+        public_inputs_hash: "55".repeat(32),
+        timelock_expires_at: Some("2030-01-01T00:00:00.000Z".into()),
         revoked: false,
         checked_at: now,
     };
