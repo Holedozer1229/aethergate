@@ -40,7 +40,8 @@ separate trusted configuration channel, not copied blindly from URUU's API.
 ## Current safety status
 
 This is an independent authorization verifier and signing-package message
-gate, not a deployed distributed signing network. The existing FROST
+gate, not a deployed distributed signing network. The EXCAL share-generation
+path is explicitly hard-disabled in code pending compatibility evidence. The existing FROST
 coordinator/signers still include in-process orchestration. Do not expose
 operator key shares or enable production signing until there are five separate
 operator processes, authenticated operator-to-operator channels, protected
