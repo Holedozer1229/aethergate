@@ -45,7 +45,8 @@ pub struct Policy { pub version: String, pub quorum: usize, pub guardian_count: 
 pub struct ApprovalMessage {
     pub schema: String, pub policy_version: String, pub request_id: String,
     pub new_key_commit: String, pub policy_commit: String, pub requested_timelock: u64,
-    pub proof_hash: String, pub chain_intent_hash: String,
+    pub proof_hash: String, pub public_inputs_hash: String, pub timelock_expires_at: String,
+    pub chain_intent_hash: String,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -135,11 +136,13 @@ fn canonical_approval(m: &ApprovalMessage, guardian_id: &str) -> String {
         concat!(
             "{{\"chainIntentHash\":{},\"guardianId\":{},\"newKeyCommit\":{},",
             "\"policyCommit\":{},\"policyVersion\":{},\"proofHash\":{},",
-            "\"requestedTimelock\":{},\"requestId\":{},\"schema\":{}}}"
+            "\"publicInputsHash\":{},\"requestId\":{},\"requestedTimelock\":{},",
+            "\"schema\":{},\"timelockExpiresAt\":{}}}"
         ),
         json_string(&m.chain_intent_hash), json_string(guardian_id), json_string(&m.new_key_commit),
         json_string(&m.policy_commit), json_string(&m.policy_version), json_string(&m.proof_hash),
-        m.requested_timelock, json_string(&m.request_id), json_string(&m.schema),
+        json_string(&m.public_inputs_hash), json_string(&m.request_id), m.requested_timelock,
+        json_string(&m.schema), json_string(&m.timelock_expires_at),
     )
 }
 
@@ -193,6 +196,8 @@ pub fn verify_uruu_authorization(
         return Err(AuthorizationError::Rejected("approval policy binding mismatch".into()));
     }
     hex32(&m.proof_hash, "proofHash")?;
+    hex32(&m.public_inputs_hash, "publicInputsHash")?;
+    if m.timelock_expires_at.is_empty() { return Err(AuthorizationError::Malformed("missing timelock expiry".into())); }
     let mut seen = HashSet::new();
     let mut verified = Vec::new();
     for approval in &e.guardian_signatures {
@@ -266,7 +271,7 @@ mod tests {
           "chainIntentHash":"0000000000000000000000000000000000000000000000000000000000000000",
           "sighashHex":"0000000000000000000000000000000000000000000000000000000000000000",
           "approvalMessageSchema":"uruu.guardian-approval.v1",
-          "approvalMessage":{"schema":"uruu.guardian-approval.v1","policyVersion":"v1","requestId":"r","newKeyCommit":"x","policyCommit":"y","requestedTimelock":60,"proofHash":"0000000000000000000000000000000000000000000000000000000000000000","chainIntentHash":"0000000000000000000000000000000000000000000000000000000000000000"},
+          "approvalMessage":{"schema":"uruu.guardian-approval.v1","policyVersion":"v1","requestId":"r","newKeyCommit":"x","policyCommit":"y","requestedTimelock":60,"proofHash":"0000000000000000000000000000000000000000000000000000000000000000","publicInputsHash":"0000000000000000000000000000000000000000000000000000000000000000","timelockExpiresAt":"2030-01-01T00:00:00.000Z","chainIntentHash":"0000000000000000000000000000000000000000000000000000000000000000"},
           "guardianSignatures":[],"expiresAt":1,"status":"READY_FOR_INDEPENDENT_OPERATOR_VERIFICATION"
         }"#).unwrap();
         assert!(verify_uruu_authorization(&e, &BTreeMap::new(), 2).is_err());
