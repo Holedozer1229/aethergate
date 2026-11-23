@@ -202,7 +202,7 @@ pub fn require_exact_sighash(
     auth: &VerifiedAuthorizedIntent, proposed_message: &[u8], now: u64,
 ) -> Result<(), AuthorizationError> {
     if auth.expires_at <= now { return Err(AuthorizationError::Rejected("authorization expired".into())); }
-    if proposed_message != auth.sighash {
+    if proposed_message != auth.sighash.as_slice() {
         return Err(AuthorizationError::Rejected("FROST message differs from approved chain sighash".into()));
     }
     Ok(())
