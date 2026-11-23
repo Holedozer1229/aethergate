@@ -64,7 +64,7 @@ pub struct AuthorizationEnvelope {
 #[derive(Debug, Clone)]
 pub struct VerifiedAuthorizedIntent {
     request_id: String, chain_intent_hash: [u8; 32], sighash: [u8; 32],
-    expires_at: u64, verified_guardians: Vec<String>,
+    expires_at: u64, verified_guardians: Vec<String>, policy_version: String, quorum: usize,
 }
 
 impl VerifiedAuthorizedIntent {
@@ -73,6 +73,24 @@ impl VerifiedAuthorizedIntent {
     pub fn sighash(&self) -> &[u8; 32] { &self.sighash }
     pub fn expires_at(&self) -> u64 { self.expires_at }
     pub fn verified_guardians(&self) -> &[String] { &self.verified_guardians }
+    pub fn policy_version(&self) -> &str { &self.policy_version }
+    pub fn quorum(&self) -> usize { self.quorum }
+}
+
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LiveOperatorStatus {
+    pub schema: String,
+    pub request_id: String,
+    pub chain_intent_hash: String,
+    pub expires_at: Option<u64>,
+    pub status: String,
+    pub approval_count: usize,
+    pub quorum: usize,
+    pub policy_version: Option<String>,
+    pub revoked: bool,
+    pub checked_at: u64,
 }
 
 fn hex_decode(value: &str) -> Result<Vec<u8>, AuthorizationError> {
@@ -201,7 +219,28 @@ pub fn verify_uruu_authorization(
     Ok(VerifiedAuthorizedIntent {
         request_id: i.request_id.clone(), chain_intent_hash: ih, sighash,
         expires_at: i.expires_at, verified_guardians: verified,
+        policy_version: e.policy.version.clone(), quorum: e.policy.quorum,
     })
+}
+
+
+/// Require a fresh live status response from the authenticated URUU operator endpoint.
+pub fn require_live_operator_status(
+    auth: &VerifiedAuthorizedIntent, status: &LiveOperatorStatus, now: u64,
+) -> Result<(), AuthorizationError> {
+    let expected_hash = auth.chain_intent_hash.iter().map(|b| format!("{b:02x}")).collect::<String>();
+    if status.schema != "uruu.frostgate-operator-status.v1" || status.revoked ||
+       status.status != "APPROVED" || status.request_id != auth.request_id ||
+       status.chain_intent_hash != expected_hash ||
+       status.expires_at != Some(auth.expires_at) ||
+       status.policy_version.as_deref() != Some(auth.policy_version.as_str()) ||
+       status.quorum != auth.quorum || status.approval_count < auth.quorum {
+        return Err(AuthorizationError::Rejected("live URUU status revoked or mismatched".into()));
+    }
+    if status.checked_at > now || now.saturating_sub(status.checked_at) > 30 {
+        return Err(AuthorizationError::Rejected("live URUU status is stale".into()));
+    }
+    Ok(())
 }
 
 /// Verify the exact 32-byte message presented to a FROST signer. This does not
