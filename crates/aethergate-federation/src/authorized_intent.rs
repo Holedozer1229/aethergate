@@ -66,6 +66,8 @@ pub struct AuthorizationEnvelope {
 pub struct VerifiedAuthorizedIntent {
     request_id: String, chain_id: String, chain_intent_hash: [u8; 32], sighash: [u8; 32],
     expires_at: u64, verified_guardians: Vec<String>, policy_version: String, quorum: usize,
+    new_key_commit: String, policy_commit: String, proof_hash: String, public_inputs_hash: String,
+    timelock_expires_at: String,
 }
 
 impl VerifiedAuthorizedIntent {
@@ -77,6 +79,11 @@ impl VerifiedAuthorizedIntent {
     pub fn verified_guardians(&self) -> &[String] { &self.verified_guardians }
     pub fn policy_version(&self) -> &str { &self.policy_version }
     pub fn quorum(&self) -> usize { self.quorum }
+    pub fn new_key_commit(&self) -> &str { &self.new_key_commit }
+    pub fn policy_commit(&self) -> &str { &self.policy_commit }
+    pub fn proof_hash(&self) -> &str { &self.proof_hash }
+    pub fn public_inputs_hash(&self) -> &str { &self.public_inputs_hash }
+    pub fn timelock_expires_at(&self) -> &str { &self.timelock_expires_at }
 }
 
 
@@ -91,6 +98,11 @@ pub struct LiveOperatorStatus {
     pub approval_count: usize,
     pub quorum: usize,
     pub policy_version: Option<String>,
+    pub new_key_commit: String,
+    pub policy_commit: String,
+    pub proof_hash: String,
+    pub public_inputs_hash: String,
+    pub timelock_expires_at: Option<String>,
     pub revoked: bool,
     pub checked_at: u64,
 }
@@ -226,6 +238,9 @@ pub fn verify_uruu_authorization(
         request_id: i.request_id.clone(), chain_id: i.chain_id.clone(), chain_intent_hash: ih, sighash,
         expires_at: i.expires_at, verified_guardians: verified,
         policy_version: e.policy.version.clone(), quorum: e.policy.quorum,
+        new_key_commit: m.new_key_commit.clone(), policy_commit: m.policy_commit.clone(),
+        proof_hash: m.proof_hash.clone(), public_inputs_hash: m.public_inputs_hash.clone(),
+        timelock_expires_at: m.timelock_expires_at.clone(),
     })
 }
 
@@ -240,7 +255,10 @@ pub fn require_live_operator_status(
        status.chain_intent_hash != expected_hash ||
        status.expires_at != Some(auth.expires_at) ||
        status.policy_version.as_deref() != Some(auth.policy_version.as_str()) ||
-       status.quorum != auth.quorum || status.approval_count < auth.quorum {
+       status.quorum != auth.quorum || status.approval_count < auth.quorum ||
+       status.new_key_commit != auth.new_key_commit || status.policy_commit != auth.policy_commit ||
+       status.proof_hash != auth.proof_hash || status.public_inputs_hash != auth.public_inputs_hash ||
+       status.timelock_expires_at.as_deref() != Some(auth.timelock_expires_at.as_str()) {
         return Err(AuthorizationError::Rejected("live URUU status revoked or mismatched".into()));
     }
     if status.checked_at > now || now.saturating_sub(status.checked_at) > 30 {
