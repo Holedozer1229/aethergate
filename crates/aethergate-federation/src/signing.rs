@@ -487,6 +487,15 @@ mod tests {
     }
 
     #[test]
+    fn abort_pending_discards_nonce_and_allows_fresh_session() {
+        let (_coord, mut signers) = ceremony_signers(&[1]);
+        let mut signer = signers.pop().unwrap();
+        signer.commit(&mut OsRng).unwrap();
+        signer.abort_pending();
+        assert!(signer.commit(&mut OsRng).is_ok());
+    }
+
+    #[test]
     fn double_sign_is_impossible() {
         let (coord, mut signers) = ceremony_signers(&[1, 2, 3]);
         let mut commitments = BTreeMap::new();
