@@ -56,6 +56,8 @@ fn accepts_three_independent_guardian_signatures_and_binds_frost_message() {
         policy_commit: "policy-commit".into(),
         requested_timelock: 86_400,
         proof_hash: "44".repeat(32),
+        public_inputs_hash: "55".repeat(32),
+        timelock_expires_at: "2030-01-01T00:00:00.000Z".into(),
         chain_intent_hash: intent_hash.clone(),
     };
 
@@ -73,9 +75,11 @@ fn accepts_three_independent_guardian_signatures_and_binds_frost_message() {
                 "policyCommit": message.policy_commit,
                 "policyVersion": message.policy_version,
                 "proofHash": message.proof_hash,
-                "requestedTimelock": message.requested_timelock,
+                "publicInputsHash": message.public_inputs_hash,
                 "requestId": message.request_id,
+                "requestedTimelock": message.requested_timelock,
                 "schema": message.schema,
+                "timelockExpiresAt": message.timelock_expires_at,
             });
             let mut bytes = b"URUU-GUARDIAN-APPROVAL\0".to_vec();
             bytes.extend_from_slice(&serde_json::to_vec(&canonical_message).unwrap());
