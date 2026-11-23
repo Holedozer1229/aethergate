@@ -64,12 +64,13 @@ pub struct AuthorizationEnvelope {
 
 #[derive(Debug, Clone)]
 pub struct VerifiedAuthorizedIntent {
-    request_id: String, chain_intent_hash: [u8; 32], sighash: [u8; 32],
+    request_id: String, chain_id: String, chain_intent_hash: [u8; 32], sighash: [u8; 32],
     expires_at: u64, verified_guardians: Vec<String>, policy_version: String, quorum: usize,
 }
 
 impl VerifiedAuthorizedIntent {
     pub fn request_id(&self) -> &str { &self.request_id }
+    pub fn chain_id(&self) -> &str { &self.chain_id }
     pub fn chain_intent_hash(&self) -> &[u8; 32] { &self.chain_intent_hash }
     pub fn sighash(&self) -> &[u8; 32] { &self.sighash }
     pub fn expires_at(&self) -> u64 { self.expires_at }
@@ -222,7 +223,7 @@ pub fn verify_uruu_authorization(
         return Err(AuthorizationError::Rejected("guardian quorum not met".into()));
     }
     Ok(VerifiedAuthorizedIntent {
-        request_id: i.request_id.clone(), chain_intent_hash: ih, sighash,
+        request_id: i.request_id.clone(), chain_id: i.chain_id.clone(), chain_intent_hash: ih, sighash,
         expires_at: i.expires_at, verified_guardians: verified,
         policy_version: e.policy.version.clone(), quorum: e.policy.quorum,
     })
@@ -244,6 +245,19 @@ pub fn require_live_operator_status(
     }
     if status.checked_at > now || now.saturating_sub(status.checked_at) > 30 {
         return Err(AuthorizationError::Rejected("live URUU status is stale".into()));
+    }
+    Ok(())
+}
+
+/// EXCAL is intentionally blocked until a separate compatibility review proves
+/// its native sighash and signature verification accept this exact ciphersuite.
+pub fn require_signature_compatibility(
+    auth: &VerifiedAuthorizedIntent,
+) -> Result<(), AuthorizationError> {
+    if auth.chain_id.to_ascii_uppercase().starts_with("EXCAL") {
+        return Err(AuthorizationError::Rejected(
+            "EXCAL FROST signing disabled pending independent chain compatibility proof".into()
+        ));
     }
     Ok(())
 }
