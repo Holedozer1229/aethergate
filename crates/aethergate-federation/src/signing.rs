@@ -114,12 +114,14 @@ impl OperatorSigner {
         &mut self,
         signing_package: &SigningPackage<FgSuite>,
         authorization: &crate::authorized_intent::VerifiedAuthorizedIntent,
+        live_status: &crate::authorized_intent::LiveOperatorStatus,
         now: u64,
     ) -> Result<round2::SignatureShare<FgSuite>, CeremonyError> {
+        crate::authorized_intent::require_live_operator_status(
+            authorization, live_status, now,
+        ).map_err(|err| CeremonyError::Invalid(format!("URUU live status rejected: {err}")))?;
         crate::authorized_intent::require_exact_sighash(
-            authorization,
-            signing_package.message(),
-            now,
+            authorization, signing_package.message(), now,
         ).map_err(|err| CeremonyError::Invalid(format!("URUU authorization rejected: {err}")))?;
         self.sign(signing_package)
     }
