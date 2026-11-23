@@ -82,6 +82,12 @@ impl OperatorSigner {
         Ok(commitments)
     }
 
+    /// Abort an outstanding signing session and drop its one-time nonces.
+    /// Call this when authorization, coordinator data, or operator policy fails.
+    pub fn abort_pending(&mut self) {
+        self.pending_nonces.take();
+    }
+
     /// Round 2: emit the signature share for the coordinator's package.
     ///
     /// The package must contain this signer's own commitment (it does when
@@ -120,14 +126,22 @@ impl OperatorSigner {
             .duration_since(std::time::UNIX_EPOCH)
             .map_err(|_| CeremonyError::Invalid("system clock precedes Unix epoch".into()))?
             .as_secs();
-        crate::authorized_intent::require_signature_compatibility(authorization)
-            .map_err(|err| CeremonyError::Invalid(format!("chain compatibility gate rejected: {err}")))?;
-        crate::authorized_intent::require_live_operator_status(
+        if let Err(err) = crate::authorized_intent::require_signature_compatibility(authorization) {
+            self.abort_pending();
+            return Err(CeremonyError::Invalid(format!("chain compatibility gate rejected: {err}")));
+        }
+        if let Err(err) = crate::authorized_intent::require_live_operator_status(
             authorization, live_status, now,
-        ).map_err(|err| CeremonyError::Invalid(format!("URUU live status rejected: {err}")))?;
-        crate::authorized_intent::require_exact_sighash(
+        ) {
+            self.abort_pending();
+            return Err(CeremonyError::Invalid(format!("URUU live status rejected: {err}")));
+        }
+        if let Err(err) = crate::authorized_intent::require_exact_sighash(
             authorization, signing_package.message(), now,
-        ).map_err(|err| CeremonyError::Invalid(format!("URUU authorization rejected: {err}")))?;
+        ) {
+            self.abort_pending();
+            return Err(CeremonyError::Invalid(format!("URUU authorization rejected: {err}")));
+        }
         self.sign(signing_package)
     }
 
