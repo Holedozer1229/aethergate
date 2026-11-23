@@ -82,6 +82,12 @@ impl OperatorSigner {
         Ok(commitments)
     }
 
+    /// Abort an outstanding signing session and drop its one-time nonces.
+    /// Call this when authorization, coordinator data, or operator policy fails.
+    pub fn abort_pending(&mut self) {
+        drop(self.pending_nonces.take());
+    }
+
     /// Round 2: emit the signature share for the coordinator's package.
     ///
     /// The package must contain this signer's own commitment (it does when
@@ -102,6 +108,41 @@ impl OperatorSigner {
             )
         })?;
         Ok(round2::sign(signing_package, &nonces, &self.key_package)?)
+    }
+
+    /// Sign only when this exact FROST package message matches a locally
+    /// verified URUU recovery authorization. Every operator must independently
+    /// call verify_uruu_authorization with its own trusted guardian registry.
+    ///
+    /// This method does not assert that EXCAL accepts the resulting BIP340
+    /// signature; chain-native compatibility remains a separate gate.
+    pub fn sign_authorized(
+        &mut self,
+        signing_package: &SigningPackage<FgSuite>,
+        authorization: &crate::authorized_intent::VerifiedAuthorizedIntent,
+        live_status: &crate::authorized_intent::LiveOperatorStatus,
+    ) -> Result<round2::SignatureShare<FgSuite>, CeremonyError> {
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_err(|_| CeremonyError::Invalid("system clock precedes Unix epoch".into()))?
+            .as_secs();
+        if let Err(err) = crate::authorized_intent::require_signature_compatibility(authorization) {
+            self.abort_pending();
+            return Err(CeremonyError::Invalid(format!("chain compatibility gate rejected: {err}")));
+        }
+        if let Err(err) = crate::authorized_intent::require_live_operator_status(
+            authorization, live_status, now,
+        ) {
+            self.abort_pending();
+            return Err(CeremonyError::Invalid(format!("URUU live status rejected: {err}")));
+        }
+        if let Err(err) = crate::authorized_intent::require_exact_sighash(
+            authorization, signing_package.message(), now,
+        ) {
+            self.abort_pending();
+            return Err(CeremonyError::Invalid(format!("URUU authorization rejected: {err}")));
+        }
+        self.sign(signing_package)
     }
 
     /// Round 2 with a BIP341 Taproot tweak: emit the signature share for a
@@ -443,6 +484,15 @@ mod tests {
             matches!(err, CeremonyError::Invalid(_)),
             "double commit must be refused, got: {err:?}"
         );
+    }
+
+    #[test]
+    fn abort_pending_discards_nonce_and_allows_fresh_session() {
+        let (_coord, mut signers) = ceremony_signers(&[1]);
+        let mut signer = signers.pop().unwrap();
+        signer.commit(&mut OsRng).unwrap();
+        signer.abort_pending();
+        assert!(signer.commit(&mut OsRng).is_ok());
     }
 
     #[test]
